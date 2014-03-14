@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Index</title>
+    <!-- CSS -->
+    <link type="text/css" rel="stylesheet" href="css/index.css" />
+    <!-- /CSS -->
+
+    <!-- JS -->
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript">
+        var skill_list = [];
+      $(function(){
+        var chara = [];
+
+        for (var i = 0; i < charaList.length; i++) {
+          chara = $("<option>").html(charaList[i].name).val(charaList[i].no);
+          $("#chara_select").append(chara);
+        };
+
+        for(var i = 0; i < skillList.length; i++) {
+          skill_list = $("<li>").html(skillList[i].name).css("background-color", "#8DCF3F");
+          $("#skill_ul").append(skill_list);
+        };
+
+      });
+
+      /*
+      * 選択されているモンスターを取得
+      */
+      function getMonsterSkill(obj) {
+        var now_chara = obj.options[(obj.selectedIndex)].value;
+        var material_name = [];
+        var evo_chara = [];
+        
+        // 必要素材を取得
+        for(var i = 0; i < charaList[now_chara].evollution_1.length; i++) {
+          material_name.push(materialList[charaList[now_chara].evollution_1[i]].name);
+        };
+
+        // 2回目の転生があるかどうか
+        if("evollution_2" in charaList[now_chara]) {
+          // 必要素材を取得
+          for(var i = 0; i < charaList[now_chara].evollution_1.length; i++) {
+            material_name.push(materialList[charaList[now_chara].evollution_2[i]].name);
+          };
+        };
+
+        // 配列内で重複している素材を削除
+        var filter_material_name = material_name.filter(function (x, i, self) {
+            return self.indexOf(x) === i;
+        });
+
+        for(var i = 0; i < materialList.length; i++) {
+          for(var j = 0; j < filter_material_name.length; j++) {
+            if(materialList[i].name == filter_material_name[j]) {
+              Array.prototype.push.apply(charaList[now_chara].evo_skill, materialList[i].skill);
+            };
+          };
+        };
+
+        /*
+        for(var i = 0; i < skill_list.length; i++) {
+          if(skill_list[i] == ) {
+            skill_list = $("<li>").html(skillList[i].name).css("background-color", "#8DCF3F");
+            $("#skill_ul").append(skill_list);
+          }
+        }
+*/
+        console.log("選んだキャラ名：" + charaList[now_chara].name);
+        console.log("必要素材："+filter_material_name);
+        console.log("固定特技："+charaList[now_chara].skill);
+        console.log("転生で覚えられる特技： "+charaList[now_chara].evo_skill);
+        console.log("<------------------------------------------------------------------------------------------->");
+
+      };
+    </script>
+    <!-- /JS -->
+  </head>
+  <body>
+    <div id="container">
+      <div id="main">
+        <form method="post">
+          <select id="chara_select" style="font-size: 40pt;" onchange="getMonsterSkill(this);">
+            <option>モンスターを選んでください</option>
+          </select>
+        </form>
+      </div>
+
+      <div id="skill">
+        <ul id="skill_ul"></ul>
+      </div>
+      
+    </div>
+  </body>
+</html>
